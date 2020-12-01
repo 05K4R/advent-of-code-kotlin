@@ -1,9 +1,9 @@
-package year2020.day1part1
+package year2020
 
 import NoSolutionFoundException
 import Puzzle
 
-class ExpenseReport(private val expenses: Set<Int>) : Puzzle {
+class Day1(private val expenses: Set<Int>) : Puzzle {
     override fun solutionPartOne(): Int {
         for (firstExpense in expenses) {
             val secondExpense = expenses.firstOrNull { it + firstExpense == 2020 } ?: continue
