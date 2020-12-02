@@ -1,9 +1,12 @@
 package year2020
 
+import InputReader
 import NoSolutionFoundException
 import Puzzle
 
 class Day1(private val expenses: Set<Int>) : Puzzle {
+    constructor(inputReader: InputReader) : this(inputReader.asIntSet())
+
     override fun solutionPartOne(): Int {
         for (firstExpense in expenses) {
             val secondExpense = expenses.firstOrNull { it + firstExpense == 2020 } ?: continue

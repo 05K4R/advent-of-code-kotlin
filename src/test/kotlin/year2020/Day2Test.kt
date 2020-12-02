@@ -1,5 +1,6 @@
 package year2020
 
+import InputReader
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
@@ -21,6 +22,10 @@ class Day2Test : StringSpec({
             "2-9 c: ccccccccc"
         )
         Day2(givenPolicyAndPasswords).solutionPartOne() shouldBe 2
+    }
+
+    "Part one, my input" {
+        Day2(InputReader(2020, 2)).solutionPartOne() shouldBe 469
     }
 
     "Part two, valid password" {
@@ -45,5 +50,9 @@ class Day2Test : StringSpec({
             "2-9 c: ccccccccc"
         )
         Day2(givenPolicyAndPasswords).solutionPartTwo() shouldBe 1
+    }
+
+    "Part two, my input" {
+        Day2(InputReader(2020, 2)).solutionPartTwo() shouldBe 267
     }
 })
