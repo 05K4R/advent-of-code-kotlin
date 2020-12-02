@@ -8,6 +8,7 @@ fun main() {
     println(Day1(InputReader(year = 2020, day = 1).asIntSet()).solutionPartTwo())
 
     println(Day2(InputReader(year = 2020, day = 2).asStringSet()).solutionPartOne())
+    println(Day2(InputReader(year = 2020, day = 2).asStringSet()).solutionPartTwo())
 }
 
 class InputReader(year: Int, day: Int) {

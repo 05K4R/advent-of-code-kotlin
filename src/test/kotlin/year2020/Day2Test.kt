@@ -22,4 +22,28 @@ class Day2Test : StringSpec({
         )
         Day2(givenPolicyAndPasswords).solutionPartOne() shouldBe 2
     }
+
+    "Part two, valid password" {
+        val givenPolicyAndPassword = "1-3 a: abcde"
+        Day2(setOf(givenPolicyAndPassword)).solutionPartTwo() shouldBe 1
+    }
+
+    "Part two, invalid password 1" {
+        val givenPolicyAndPassword = "1-3 b: cdefg"
+        Day2(setOf(givenPolicyAndPassword)).solutionPartTwo() shouldBe 0
+    }
+
+    "Part two, invalid password 2" {
+        val givenPolicyAndPassword = "2-9 c: ccccccccc"
+        Day2(setOf(givenPolicyAndPassword)).solutionPartTwo() shouldBe 0
+    }
+
+    "Part two, given test" {
+        val givenPolicyAndPasswords = setOf(
+            "1-3 a: abcde",
+            "1-3 b: cdefg",
+            "2-9 c: ccccccccc"
+        )
+        Day2(givenPolicyAndPasswords).solutionPartTwo() shouldBe 1
+    }
 })
