@@ -7,7 +7,7 @@ import Puzzle
 class Day1(private val expenses: Set<Int>) : Puzzle {
     constructor(inputReader: InputReader) : this(inputReader.asIntSet())
 
-    override fun solutionPartOne(): Int {
+    override fun answerPart1(): Int {
         for (firstExpense in expenses) {
             val secondExpense = expenses.firstOrNull { it + firstExpense == 2020 } ?: continue
             return firstExpense * secondExpense
@@ -16,7 +16,7 @@ class Day1(private val expenses: Set<Int>) : Puzzle {
         throw NoSolutionFoundException()
     }
 
-    override fun solutionPartTwo(): Int {
+    override fun answerPart2(): Int {
         for (firstExpense in expenses) {
             for (secondExpense in expenses) {
                 for (thirdExpense in expenses) {

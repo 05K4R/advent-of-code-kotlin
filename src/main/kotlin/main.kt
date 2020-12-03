@@ -1,14 +1,13 @@
 import year2020.Day1
 import year2020.Day2
 import java.io.File
-import java.lang.RuntimeException
 
 fun main() {
-    println(Day1(InputReader(year = 2020, day = 1)).solutionPartOne())
-    println(Day1(InputReader(year = 2020, day = 1)).solutionPartTwo())
+    println(Day1(InputReader(year = 2020, day = 1)).answerPart1())
+    println(Day1(InputReader(year = 2020, day = 1)).answerPart2())
 
-    println(Day2(InputReader(year = 2020, day = 2)).solutionPartOne())
-    println(Day2(InputReader(year = 2020, day = 2)).solutionPartTwo())
+    println(Day2(InputReader(year = 2020, day = 2)).answerPart1())
+    println(Day2(InputReader(year = 2020, day = 2)).answerPart2())
 }
 
 class InputReader(year: Int, day: Int) {
@@ -19,8 +18,8 @@ class InputReader(year: Int, day: Int) {
 }
 
 interface Puzzle {
-    fun solutionPartOne(): Int
-    fun solutionPartTwo(): Int
+    fun answerPart1(): Int
+    fun answerPart2(): Int
 }
 
 class NoSolutionFoundException : RuntimeException()

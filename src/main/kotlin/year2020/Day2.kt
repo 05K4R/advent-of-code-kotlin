@@ -8,14 +8,14 @@ class Day2(input: Set<String>) : Puzzle {
 
     private val policiesAndPasswords = input.map { parse(it) }.toSet()
 
-    override fun solutionPartOne(): Int {
+    override fun answerPart1(): Int {
         return policiesAndPasswords.filter { policyAndPassword ->
             val occurrences = policyAndPassword.password.count { it == policyAndPassword.letter }
             occurrences >= policyAndPassword.firstNumber && occurrences <= policyAndPassword.secondNumber
         }.size
     }
 
-    override fun solutionPartTwo(): Int {
+    override fun answerPart2(): Int {
         return policiesAndPasswords.filter {
             (it.password[it.firstNumber - 1] == it.letter) xor (it.password[it.secondNumber - 1] == it.letter)
         }.size
@@ -26,8 +26,18 @@ class Day2(input: Set<String>) : Puzzle {
         val parts = input.split(" ")
         val numbers = parts[0].split("-").map { it.toInt() }
         val cleanedLetter = parts[1].toCharArray().first()
-        return PolicyAndPassword(firstNumber = numbers[0], secondNumber = numbers[1], letter = cleanedLetter, password = parts[2])
+        return PolicyAndPassword(
+            firstNumber = numbers[0],
+            secondNumber = numbers[1],
+            letter = cleanedLetter,
+            password = parts[2]
+        )
     }
 }
 
-private data class PolicyAndPassword(val firstNumber: Int, val secondNumber: Int, val letter: Char, val password: String)
+private data class PolicyAndPassword(
+    val firstNumber: Int,
+    val secondNumber: Int,
+    val letter: Char,
+    val password: String
+)
