@@ -13,6 +13,9 @@ repositories {
 }
 
 dependencies {
+    testImplementation(kotlin("test-junit5"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
+
     val kotestVersion = "4.3.1"
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
 }
