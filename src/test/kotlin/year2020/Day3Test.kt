@@ -59,4 +59,25 @@ class Day3Test : StringSpec({
     "Part one, my input" {
         Day3(InputReader(2020, 3)).answerPart1() shouldBe 148
     }
+
+    "Part two, given test" {
+        val map = listOf(
+            "..##.......",
+            "#...#...#..",
+            ".#....#..#.",
+            "..#.#...#.#",
+            ".#...##..#.",
+            "..#.##.....",
+            ".#.#.#....#",
+            ".#........#",
+            "#.##...#...",
+            "#...##....#",
+            ".#..#...#.#",
+        )
+        Day3(map).answerPart2() shouldBe 336
+    }
+
+    "Part two, my input" {
+        Day3(InputReader(2020, 3)).answerPart2() shouldBe 727923200
+    }
 })

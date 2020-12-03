@@ -2,7 +2,7 @@ import year2020.Day3
 import java.io.File
 
 fun main() {
-    println(Day3(InputReader(year = 2020, day = 3)).answerPart1())
+    println(Day3(InputReader(year = 2020, day = 3)).answerPart2())
 }
 
 class InputReader(year: Int, day: Int) {

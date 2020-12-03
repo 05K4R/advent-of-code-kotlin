@@ -7,19 +7,29 @@ class Day3(val map: List<String>) : Puzzle {
     constructor(inputReader: InputReader) : this(inputReader.asStringList())
 
     override fun answerPart1(): Int {
-        var x = 0
-        var y = 0
-        var trees = 0
-        while (x < map.size) {
-            if (map[x][y] == '#') trees++
-            y += 3
-            if (y >= map[x].length) y -= map[x].length
-            x += 1
-        }
-        return trees
+        return encounteredTrees(3, 1)
     }
 
     override fun answerPart2(): Int {
-        TODO("Not yet implemented")
+        return (
+                encounteredTrees(1, 1)
+                * encounteredTrees(3, 1)
+                * encounteredTrees(5, 1)
+                * encounteredTrees(7, 1)
+                * encounteredTrees(1, 2)
+                )
+    }
+
+    private fun encounteredTrees(xStepSize: Int, yStepSize: Int): Int {
+        var y = 0
+        var x = 0
+        var trees = 0
+        while (y < map.size) {
+            if (map[y][x] == '#') trees++
+            x += xStepSize
+            if (x >= map[y].length) x -= map[y].length
+            y += yStepSize
+        }
+        return trees
     }
 }
