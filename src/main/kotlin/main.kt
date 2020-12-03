@@ -1,8 +1,8 @@
-import year2020.Day3
 import java.io.File
 
 fun main() {
-    println(Day3(InputReader(year = 2020, day = 3)).answerPart2())
+    val puzzle = loadPuzzle(2020, 3)
+    println(puzzle.answerPart2())
 }
 
 class InputReader(year: Int, day: Int) {
@@ -19,3 +19,10 @@ interface Puzzle {
 }
 
 class NoSolutionFoundException : RuntimeException()
+
+fun loadPuzzle(year: Int, day: Int): Puzzle {
+    return Class.forName("year$year.Day$day")
+        ?.getDeclaredConstructor(InputReader::class.java)
+        ?.newInstance(InputReader(year, day))
+        as Puzzle
+}
