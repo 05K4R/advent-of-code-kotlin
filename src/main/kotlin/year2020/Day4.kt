@@ -36,73 +36,53 @@ private fun createPassport(passportString: String): Passport {
         .toMap()
         .let {
             Passport(
-                birthYear = it["byr"],
-                issueYear = it["iyr"],
-                expirationYear = it["eyr"],
-                height = it["hgt"],
-                hairColor = it["hcl"],
-                eyeColor = it["ecl"],
-                passportId = it["pid"],
-                countryId = it["cid"],
+                birthYear = it["byr"].orEmpty(),
+                issueYear = it["iyr"].orEmpty(),
+                expirationYear = it["eyr"].orEmpty(),
+                height = it["hgt"].orEmpty(),
+                hairColor = it["hcl"].orEmpty(),
+                eyeColor = it["ecl"].orEmpty(),
+                passportId = it["pid"].orEmpty(),
+                countryId = it["cid"].orEmpty(),
             )
         }
 }
 
 private data class Passport(
-    val birthYear: String?,
-    val issueYear: String?,
-    val expirationYear: String?,
-    val height: String?,
-    val hairColor: String?,
-    val eyeColor: String?,
-    val passportId: String?,
-    val countryId: String?,
+    val birthYear: String,
+    val issueYear: String,
+    val expirationYear: String,
+    val height: String,
+    val hairColor: String,
+    val eyeColor: String,
+    val passportId: String,
+    val countryId: String,
 ) {
-    fun hasRequiredFields(): Boolean {
-        return birthYear != null
-                && issueYear != null
-                && expirationYear != null
-                && height != null
-                && hairColor != null
-                && eyeColor != null
-                && passportId != null
-    }
-
-    fun hasValidFieldValues(): Boolean {
-        return validBirthYear()
-                && validIssueYear()
-                && validExpirationYear()
-                && validHeight()
-                && validHairColor()
-                && validEyeColor()
-                && validPassportId()
-    }
-
-    private fun validBirthYear() = birthYear?.toInt() in 1920..2002
-    private fun validIssueYear() = issueYear?.toInt() in 2010..2020
-    private fun validExpirationYear() = expirationYear?.toInt() in 2020..2030
-    private fun validHeight(): Boolean {
+    fun hasRequiredFields() = birthYear.isNotBlank()
+            && issueYear.isNotBlank()
+            && expirationYear.isNotBlank()
+            && height.isNotBlank()
+            && hairColor.isNotBlank()
+            && eyeColor.isNotBlank()
+            && passportId.isNotBlank()
+    fun hasValidFieldValues() = validBirthYear()
+            && validIssueYear()
+            && validExpirationYear()
+            && validHeight()
+            && validHairColor()
+            && validEyeColor()
+            && validPassportId()
+    fun validBirthYear() = birthYear.toInt() in 1920..2002
+    fun validIssueYear() = issueYear.toInt() in 2010..2020
+    fun validExpirationYear() = expirationYear.toInt() in 2020..2030
+    fun validHeight(): Boolean {
         return when {
-            height == null -> false
             height.endsWith("cm") -> height.removeSuffix("cm").toInt() in 150..193
             height.endsWith("in") -> height.removeSuffix("in").toInt() in 59..76
             else -> false
         }
     }
-
-    private fun validHairColor(): Boolean {
-        return when {
-            hairColor == null -> false
-            hairColor.startsWith("#") -> {
-                val hex = hairColor.removePrefix("#")
-                hex.length == 6 && hex.all { (it in 'a'..'f' || it in '0'..'9') }
-            }
-            else -> false
-        }
-    }
-
-    private fun validEyeColor() = eyeColor == "amb" || eyeColor == "blu" || eyeColor == "brn"
-                || eyeColor == "gry" || eyeColor == "grn" || eyeColor == "hzl" || eyeColor == "oth"
-
-    private fun validPassportId() = passportId?.length == 9 && passportId.all { it.isDigit() }
+    fun validHairColor() = Regex("#[a-f0-9]{6}").matches(hairColor)
+    fun validEyeColor() = Regex("(brn|amb|blu|gry|grn|hzl|oth)").matches(eyeColor)
+    fun validPassportId() = Regex("[0-9]{9}").matches(passportId)
 }
