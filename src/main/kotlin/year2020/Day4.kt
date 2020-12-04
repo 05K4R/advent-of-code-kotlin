@@ -15,42 +15,37 @@ class Day4(passportStrings: List<String>) : Puzzle {
     override fun answerPart2(): Int {
         return passports.count { it.hasRequiredFields() && it.hasValidFieldValues() }
     }
+}
 
-    private fun parsePassports(strings: List<String>): Set<Passport> {
-        val passports = mutableSetOf<Passport>()
-        val parsedFields = mutableMapOf<String, String>()
+private fun parsePassports(strings: List<String>): Set<Passport> {
+    return strings.fold(listOf(""), ::mergeMultipleLines)
+        .map(::createPassport)
+        .toSet()
+}
 
-        for (string in strings) {
-            if (string.isBlank()) {
-                passports.add(createPassport(parsedFields))
-                parsedFields.clear()
-            } else {
-                val fieldsAndValues = string.split(" ")
-                for (fieldAndValue in fieldsAndValues) {
-                    val (field, value) = fieldAndValue.split(":")
-                    parsedFields[field] = value
-                }
-            }
-        }
+private fun mergeMultipleLines(previous: List<String>, newLine: String): List<String> {
+    return if (newLine.isBlank()) previous + ""
+    else previous.take(previous.size - 1) + (previous.last() + "$newLine ")
+}
 
-        passports.add(createPassport(parsedFields))
-        return passports
-    }
-
-    private fun createPassport(
-        parsedFields: Map<String, String>
-    ): Passport {
-        return Passport(
-                birthYear = parsedFields["byr"],
-                issueYear = parsedFields["iyr"],
-                expirationYear = parsedFields["eyr"],
-                height = parsedFields["hgt"],
-                hairColor = parsedFields["hcl"],
-                eyeColor = parsedFields["ecl"],
-                passportId = parsedFields["pid"],
-                countryId = parsedFields["cid"],
+private fun createPassport(passportString: String): Passport {
+    return passportString.split(" ")
+        .filter { it.isNotBlank() }
+        .map { it.split(":") }
+        .map { Pair(it[0], it[1]) }
+        .toMap()
+        .let {
+            Passport(
+                birthYear = it["byr"],
+                issueYear = it["iyr"],
+                expirationYear = it["eyr"],
+                height = it["hgt"],
+                hairColor = it["hcl"],
+                eyeColor = it["ecl"],
+                passportId = it["pid"],
+                countryId = it["cid"],
             )
-    }
+        }
 }
 
 private data class Passport(
@@ -88,18 +83,18 @@ private data class Passport(
     private fun validExpirationYear() = expirationYear?.toInt() in 2020..2030
     private fun validHeight(): Boolean {
         return when {
-            height == null -> true
-            height.endsWith("cm") -> height.substringBefore("cm").toInt() in 150..193
-            height.endsWith("in") -> height.substringBefore("in").toInt() in 59..76
+            height == null -> false
+            height.endsWith("cm") -> height.removeSuffix("cm").toInt() in 150..193
+            height.endsWith("in") -> height.removeSuffix("in").toInt() in 59..76
             else -> false
         }
     }
 
     private fun validHairColor(): Boolean {
         return when {
-            hairColor == null -> true
+            hairColor == null -> false
             hairColor.startsWith("#") -> {
-                val hex = hairColor.substringAfter("#")
+                val hex = hairColor.removePrefix("#")
                 hex.length == 6 && hex.all { (it in 'a'..'f' || it in '0'..'9') }
             }
             else -> false
