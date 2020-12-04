@@ -81,24 +81,11 @@ private data class Passport(
                 && validHairColor()
                 && validEyeColor()
                 && validPassportId()
-                && validCountryId()
     }
 
-    private fun validBirthYear(): Boolean {
-        return if (birthYear == null) true
-        else birthYear.toInt() in 1920..2002
-    }
-
-    private fun validIssueYear(): Boolean {
-        return if (issueYear == null) true
-        else issueYear.toInt() in 2010..2020
-    }
-
-    private fun validExpirationYear(): Boolean {
-        return if (expirationYear == null) true
-        else expirationYear.toInt() in 2020..2030
-    }
-
+    private fun validBirthYear() = birthYear?.toInt() in 1920..2002
+    private fun validIssueYear() = issueYear?.toInt() in 2010..2020
+    private fun validExpirationYear() = expirationYear?.toInt() in 2020..2030
     private fun validHeight(): Boolean {
         return when {
             height == null -> true
@@ -113,30 +100,14 @@ private data class Passport(
             hairColor == null -> true
             hairColor.startsWith("#") -> {
                 val hex = hairColor.substringAfter("#")
-                println(hex)
                 hex.length == 6 && hex.all { (it in 'a'..'f' || it in '0'..'9') }
             }
             else -> false
         }
     }
 
-    private fun validEyeColor(): Boolean {
-        return eyeColor == null
-                || eyeColor == "amb"
-                || eyeColor == "blu"
-                || eyeColor == "brn"
-                || eyeColor == "gry"
-                || eyeColor == "grn"
-                || eyeColor == "hzl"
-                || eyeColor == "oth"
-    }
+    private fun validEyeColor() = eyeColor == "amb" || eyeColor == "blu" || eyeColor == "brn"
+                || eyeColor == "gry" || eyeColor == "grn" || eyeColor == "hzl" || eyeColor == "oth"
 
-    private fun validPassportId(): Boolean {
-        return if (passportId == null) true
-        else passportId.length == 9 && passportId.all { it.isDigit() }
-    }
-
-    private fun validCountryId(): Boolean {
-        return true
-    }
+    private fun validPassportId() = passportId?.length == 9 && passportId.all { it.isDigit() }
 }
