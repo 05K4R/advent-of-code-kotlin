@@ -1,7 +1,9 @@
 import java.io.File
 
 fun main() {
-    val year = 2020; val day = 4; val part = 2
+    val year = 2020;
+    val day = 4;
+    val part = 2
     println("Day $day part $part = ${calculateAnswer(year, day, part)}")
 }
 
@@ -25,8 +27,8 @@ private fun calculateAnswer(year: Int, day: Int, part: Int): Int {
     val puzzle = Class.forName("year$year.Day$day")
         ?.getDeclaredConstructor(InputReader::class.java)
         ?.newInstance(InputReader(year, day))
-        as Puzzle
-    return when(part) {
+            as Puzzle
+    return when (part) {
         1 -> puzzle.answerPart1()
         2 -> puzzle.answerPart2()
         else -> throw InvalidPartException(part)

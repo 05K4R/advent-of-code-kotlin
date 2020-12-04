@@ -13,10 +13,10 @@ class Day3(val map: List<String>) : Puzzle {
     override fun answerPart2(): Int {
         return (
                 encounteredTrees(1, 1)
-                * encounteredTrees(3, 1)
-                * encounteredTrees(5, 1)
-                * encounteredTrees(7, 1)
-                * encounteredTrees(1, 2)
+                        * encounteredTrees(3, 1)
+                        * encounteredTrees(5, 1)
+                        * encounteredTrees(7, 1)
+                        * encounteredTrees(1, 2)
                 )
     }
 

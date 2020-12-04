@@ -65,6 +65,7 @@ private data class Passport(
             && hairColor.isNotBlank()
             && eyeColor.isNotBlank()
             && passportId.isNotBlank()
+
     fun hasValidFieldValues() = validBirthYear()
             && validIssueYear()
             && validExpirationYear()
@@ -72,6 +73,7 @@ private data class Passport(
             && validHairColor()
             && validEyeColor()
             && validPassportId()
+
     fun validBirthYear() = birthYear.toInt() in 1920..2002
     fun validIssueYear() = issueYear.toInt() in 2010..2020
     fun validExpirationYear() = expirationYear.toInt() in 2020..2030
@@ -82,6 +84,7 @@ private data class Passport(
             else -> false
         }
     }
+
     fun validHairColor() = Regex("#[a-f0-9]{6}").matches(hairColor)
     fun validEyeColor() = Regex("(brn|amb|blu|gry|grn|hzl|oth)").matches(eyeColor)
     fun validPassportId() = Regex("[0-9]{9}").matches(passportId)
