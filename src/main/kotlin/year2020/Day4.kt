@@ -9,11 +9,11 @@ class Day4(passportStrings: List<String>) : Puzzle {
     private val passports = parsePassports(passportStrings)
 
     override fun answerPart1(): Int {
-        return passports.count { it.isValid() }
+        return passports.count { it.hasRequiredFields() }
     }
 
     override fun answerPart2(): Int {
-        TODO("Not yet implemented")
+        return passports.count { it.hasRequiredFields() && it.hasValidFieldValues() }
     }
 
     private fun parsePassports(strings: List<String>): Set<Passport> {
@@ -63,7 +63,7 @@ private data class Passport(
     val passportId: String?,
     val countryId: String?,
 ) {
-    fun isValid(): Boolean {
+    fun hasRequiredFields(): Boolean {
         return birthYear != null
                 && issueYear != null
                 && expirationYear != null
@@ -71,5 +71,72 @@ private data class Passport(
                 && hairColor != null
                 && eyeColor != null
                 && passportId != null
+    }
+
+    fun hasValidFieldValues(): Boolean {
+        return validBirthYear()
+                && validIssueYear()
+                && validExpirationYear()
+                && validHeight()
+                && validHairColor()
+                && validEyeColor()
+                && validPassportId()
+                && validCountryId()
+    }
+
+    private fun validBirthYear(): Boolean {
+        return if (birthYear == null) true
+        else birthYear.toInt() in 1920..2002
+    }
+
+    private fun validIssueYear(): Boolean {
+        return if (issueYear == null) true
+        else issueYear.toInt() in 2010..2020
+    }
+
+    private fun validExpirationYear(): Boolean {
+        return if (expirationYear == null) true
+        else expirationYear.toInt() in 2020..2030
+    }
+
+    private fun validHeight(): Boolean {
+        return when {
+            height == null -> true
+            height.endsWith("cm") -> height.substringBefore("cm").toInt() in 150..193
+            height.endsWith("in") -> height.substringBefore("in").toInt() in 59..76
+            else -> false
+        }
+    }
+
+    private fun validHairColor(): Boolean {
+        return when {
+            hairColor == null -> true
+            hairColor.startsWith("#") -> {
+                val hex = hairColor.substringAfter("#")
+                println(hex)
+                hex.length == 6 && hex.all { (it in 'a'..'f' || it in '0'..'9') }
+            }
+            else -> false
+        }
+    }
+
+    private fun validEyeColor(): Boolean {
+        return eyeColor == null
+                || eyeColor == "amb"
+                || eyeColor == "blu"
+                || eyeColor == "brn"
+                || eyeColor == "gry"
+                || eyeColor == "grn"
+                || eyeColor == "hzl"
+                || eyeColor == "oth"
+    }
+
+    private fun validPassportId(): Boolean {
+        return if (passportId == null) true
+        else passportId.length == 9 && passportId.all { it.isDigit() }
+    }
+
+    private fun validCountryId(): Boolean {
+        return true
     }
 }
