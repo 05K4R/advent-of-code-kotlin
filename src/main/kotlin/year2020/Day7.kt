@@ -3,23 +3,23 @@ package year2020
 import InputReader
 import Puzzle
 
-class Day7(private val stringRules: Set<String>) : Puzzle {
+class Day7(stringRules: Set<String>) : Puzzle {
     constructor(inputReader: InputReader) : this(inputReader.asStringSet())
 
     private val rules = parseRules(stringRules)
 
     override fun answerPart1(): Int {
-        return rules.filter { (a, b) -> canContainShinyYellow(a, b) }.count()
+        return rules.filter { (_, contained) -> canContainShinyYellow(contained) }.count()
     }
 
     override fun answerPart2(): Int {
         TODO("Not yet implemented")
     }
 
-    private fun canContainShinyYellow(a: String, b: Set<String>): Boolean {
-        if (b.isEmpty()) return false
-        if (b.contains("shiny gold bag")) return true
-        return b.any { canContainShinyYellow(it, rules[it] ?: emptySet()) }
+    private fun canContainShinyYellow(contained: Set<String>): Boolean {
+        if (contained.isEmpty()) return false
+        if (contained.contains("shiny gold bag")) return true
+        return contained.any { canContainShinyYellow(rules[it] ?: emptySet()) }
     }
 }
 
