@@ -32,7 +32,7 @@ private fun createPassport(passportString: String): Passport {
     return passportString.split(" ")
         .filter { it.isNotBlank() }
         .map { it.split(":") }
-        .map { Pair(it[0], it[1]) }
+        .map { it[0] to it[1] }
         .toMap()
         .let {
             Passport(

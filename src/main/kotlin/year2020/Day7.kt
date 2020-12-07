@@ -34,5 +34,5 @@ private fun parseRule(stringRule: String): Pair<String, Set<String>> {
         .findAll(stringRule)
         .map { it.value }
         .toList()
-    return Pair(matches[0], matches.drop(1).toSet())
+    return matches.first() to matches.drop(1).toSet()
 }
