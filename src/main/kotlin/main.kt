@@ -2,7 +2,7 @@ import java.io.File
 
 fun main() {
     val year = 2020
-    val day = 7
+    val day = 8
     val part = 1
     println("Day $day part $part = ${calculateAnswer(year, day, part)}")
 }
