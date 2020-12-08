@@ -79,8 +79,7 @@ private fun parseProgram(programString: List<String>): Program {
             Operation.valueOf(it.substringBefore(" ").toUpperCase()),
             it.substringAfter(" ").toInt(),
             visited = false
-            )
-        }
+        ) }
         .toList()
         .let { Program(it, ProgramState(0, 0)) }
 }
