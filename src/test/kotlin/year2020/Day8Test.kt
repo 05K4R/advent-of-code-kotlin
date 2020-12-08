@@ -64,4 +64,8 @@ class Day8Test : StringSpec({
         )
         Day8(program).answerPart2() shouldBe 8
     }
+
+    "Part two, my input" {
+        Day8(InputReader(2020, 8)).answerPart2() shouldBe 1235
+    }
 })

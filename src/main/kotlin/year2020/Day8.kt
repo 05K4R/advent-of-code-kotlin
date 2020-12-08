@@ -4,56 +4,52 @@ import InputReader
 import Puzzle
 
 private typealias Argument = Int
-private typealias Instruction = Pair<Operation, Argument>
-
 private typealias Accumulator = Int
 private typealias ProgramPointer = Int
 private typealias Visited = Boolean
-private typealias ProgramState = Pair<Accumulator, ProgramPointer>
-
+private data class Instruction(val operation: Operation, val argument: Argument, val visited: Visited)
+private data class ProgramState(val accumulator: Accumulator, val pointer: ProgramPointer)
 private enum class TerminateReason { Loop, EndOfProgram }
 
 private enum class Operation {
-    ACC {
-        override fun execute(state: ProgramState, argument: Argument) =
-            ProgramState(state.first + argument, state.second + 1)
+    ACC { override fun execute(state: ProgramState, argument: Argument) =
+            state.copy(accumulator = state.accumulator + argument, pointer = state.pointer + 1)
     },
-    JMP {
-        override fun execute(state: ProgramState, argument: Argument) =
-            ProgramState(state.first, state.second + argument)
+    JMP { override fun execute(state: ProgramState, argument: Argument) =
+            state.copy(pointer = state.pointer + argument)
     },
-    NOP {
-        override fun execute(state: ProgramState, argument: Argument) =
-            ProgramState(state.first, state.second + 1)
+    NOP { override fun execute(state: ProgramState, argument: Argument) =
+            state.copy(pointer = state.pointer + 1)
     };
 
     abstract fun execute(state: ProgramState, argument: Argument): ProgramState
 }
-private data class Program(val instructions: List<Pair<Instruction, Visited>>, val state: ProgramState) {
-    fun execute(): Pair<Accumulator, TerminateReason> {
-        if (instructions.size <= state.second) return state.first to TerminateReason.EndOfProgram
-        if (instructions[state.second].second) return state.first to TerminateReason.Loop
 
-        val nextInstruction = instructions[state.second].first
-        val nextState = nextInstruction.first.execute(state, nextInstruction.second)
+private data class Program(val instructions: List<Instruction>, val state: ProgramState) {
+    fun execute(): Pair<Accumulator, TerminateReason> {
+        if (instructions.size <= state.pointer) return state.accumulator to TerminateReason.EndOfProgram
+        if (instructions[state.pointer].visited) return state.accumulator to TerminateReason.Loop
+
+        val nextInstruction = instructions[state.pointer]
+        val nextState = nextInstruction.operation.execute(state, nextInstruction.argument)
 
         return this.copy(
-            instructions = instructions.take(state.second)
-                    + Pair(nextInstruction, true)
-                    + instructions.drop(state.second + 1),
+            instructions = instructions.take(state.pointer)
+                    + nextInstruction.copy(visited = true)
+                    + instructions.drop(state.pointer + 1),
             state = nextState
         ).execute()
     }
 
     fun switchJmpAndNop(index: Int): Program {
-        val newInstruction = when(instructions[index].first.first) {
-            Operation.JMP -> Instruction(Operation.NOP, instructions[index].first.second)
-            Operation.NOP -> Instruction(Operation.JMP, instructions[index].first.second)
-            else -> Instruction(instructions[index].first.first, instructions[index].first.second)
+        val newInstruction = when(instructions[index].operation) {
+            Operation.JMP -> instructions[index].copy(operation = Operation.NOP)
+            Operation.NOP -> instructions[index].copy(operation = Operation.JMP)
+            else -> instructions[index]
         }
         return this.copy(
             instructions = instructions.take(index)
-                    + Pair(newInstruction, instructions[index].second)
+                    + newInstruction
                     + instructions.drop(index + 1)
         )
     }
@@ -81,8 +77,10 @@ private fun parseProgram(programString: List<String>): Program {
     return programString
         .map { Instruction(
             Operation.valueOf(it.substringBefore(" ").toUpperCase()),
-            it.substringAfter(" ").toInt())
-        }.map { it to false }
+            it.substringAfter(" ").toInt(),
+            visited = false
+            )
+        }
         .toList()
         .let { Program(it, ProgramState(0, 0)) }
 }
