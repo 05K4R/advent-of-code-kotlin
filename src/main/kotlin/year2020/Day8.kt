@@ -11,6 +11,8 @@ private typealias ProgramPointer = Int
 private typealias Visited = Boolean
 private typealias ProgramState = Pair<Accumulator, ProgramPointer>
 
+private enum class TerminateReason { Loop, EndOfProgram }
+
 private enum class Operation {
     ACC {
         override fun execute(state: ProgramState, argument: Argument) =
@@ -28,18 +30,32 @@ private enum class Operation {
     abstract fun execute(state: ProgramState, argument: Argument): ProgramState
 }
 private data class Program(val instructions: List<Pair<Instruction, Visited>>, val state: ProgramState) {
-    fun execute(): Accumulator {
-        if (instructions[state.second].second) return state.first
+    fun execute(): Pair<Accumulator, TerminateReason> {
+        if (instructions.size <= state.second) return state.first to TerminateReason.EndOfProgram
+        if (instructions[state.second].second) return state.first to TerminateReason.Loop
 
         val nextInstruction = instructions[state.second].first
         val nextState = nextInstruction.first.execute(state, nextInstruction.second)
 
-        return Program(
-            instructions.take(state.second)
+        return this.copy(
+            instructions = instructions.take(state.second)
                     + Pair(nextInstruction, true)
                     + instructions.drop(state.second + 1),
-            nextState
+            state = nextState
         ).execute()
+    }
+
+    fun switchJmpAndNop(index: Int): Program {
+        val newInstruction = when(instructions[index].first.first) {
+            Operation.JMP -> Instruction(Operation.NOP, instructions[index].first.second)
+            Operation.NOP -> Instruction(Operation.JMP, instructions[index].first.second)
+            else -> Instruction(instructions[index].first.first, instructions[index].first.second)
+        }
+        return this.copy(
+            instructions = instructions.take(index)
+                    + Pair(newInstruction, instructions[index].second)
+                    + instructions.drop(index + 1)
+        )
     }
 }
 
@@ -49,11 +65,15 @@ class Day8(programString: List<String>) : Puzzle {
     private val program = parseProgram(programString)
 
     override fun answerPart1(): Int {
-        return program.execute()
+        return program.execute().first
     }
 
     override fun answerPart2(): Int {
-        TODO("Not yet implemented")
+        return (0..program.instructions.size)
+            .asSequence()
+            .map { program.switchJmpAndNop(it) }
+            .first { it.execute().second == TerminateReason.EndOfProgram }
+            .execute().first
     }
 }
 

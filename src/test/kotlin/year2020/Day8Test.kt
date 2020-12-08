@@ -49,4 +49,19 @@ class Day8Test : StringSpec({
     "Part one, my input" {
         Day8(InputReader(2020, 8)).answerPart1() shouldBe 1859
     }
+
+    "Part two, given test" {
+        val program = listOf(
+            "nop +0",
+            "acc +1",
+            "jmp +4",
+            "acc +3",
+            "jmp -3",
+            "acc -99",
+            "acc +1",
+            "jmp -4",
+            "acc +6",
+        )
+        Day8(program).answerPart2() shouldBe 8
+    }
 })
