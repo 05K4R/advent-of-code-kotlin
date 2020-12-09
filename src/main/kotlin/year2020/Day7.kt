@@ -3,7 +3,7 @@ package year2020
 import InputReader
 import Puzzle
 
-class Day7(stringRules: Set<String>) : Puzzle {
+class Day7(stringRules: Set<String>) : Puzzle<Int> {
     constructor(inputReader: InputReader) : this(inputReader.asStringSet())
 
     private val rules = parseRules(stringRules)

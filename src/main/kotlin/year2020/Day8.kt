@@ -11,6 +11,24 @@ private data class Instruction(val operation: Operation, val argument: Argument,
 private data class ProgramState(val accumulator: Accumulator, val pointer: ProgramPointer)
 private enum class TerminateReason { Loop, EndOfProgram }
 
+class Day8(programString: List<String>) : Puzzle<Int> {
+    constructor(inputReader: InputReader) : this(inputReader.asStringList())
+
+    private val program = parseProgram(programString)
+
+    override fun answerPart1(): Int {
+        return program.execute().first
+    }
+
+    override fun answerPart2(): Int {
+        return (0..program.instructions.size)
+            .asSequence()
+            .map { program.switchJmpAndNop(it) }
+            .first { it.execute().second == TerminateReason.EndOfProgram }
+            .execute().first
+    }
+}
+
 private enum class Operation {
     ACC { override fun execute(state: ProgramState, argument: Argument) =
             state.copy(accumulator = state.accumulator + argument, pointer = state.pointer + 1)
@@ -52,24 +70,6 @@ private data class Program(val instructions: List<Instruction>, val state: Progr
                     + newInstruction
                     + instructions.drop(index + 1)
         )
-    }
-}
-
-class Day8(programString: List<String>) : Puzzle {
-    constructor(inputReader: InputReader) : this(inputReader.asStringList())
-
-    private val program = parseProgram(programString)
-
-    override fun answerPart1(): Int {
-        return program.execute().first
-    }
-
-    override fun answerPart2(): Int {
-        return (0..program.instructions.size)
-            .asSequence()
-            .map { program.switchJmpAndNop(it) }
-            .first { it.execute().second == TerminateReason.EndOfProgram }
-            .execute().first
     }
 }
 

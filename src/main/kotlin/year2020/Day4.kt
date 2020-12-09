@@ -3,7 +3,7 @@ package year2020
 import InputReader
 import Puzzle
 
-class Day4(passportStrings: List<String>) : Puzzle {
+class Day4(passportStrings: List<String>) : Puzzle<Int> {
     constructor(inputReader: InputReader) : this(inputReader.asStringList())
 
     private val passports = parsePassports(passportStrings)

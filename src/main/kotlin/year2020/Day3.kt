@@ -3,7 +3,7 @@ package year2020
 import InputReader
 import Puzzle
 
-class Day3(private val map: List<String>) : Puzzle {
+class Day3(private val map: List<String>) : Puzzle<Int> {
     constructor(inputReader: InputReader) : this(inputReader.asStringList())
 
     override fun answerPart1(): Int {
