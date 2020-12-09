@@ -9,18 +9,13 @@ class Day9(private val preambleLength: Int, private val encryptedData: List<Long
 
     override fun answerPart1(): Long {
         return encryptedData.windowed(preambleLength + 1)
-            .filter { it.take(preambleLength).cannotSumTo(it.last()) }
-            .map { it.last() }
-            .firstOrNull()
+            .firstOrNull { it.take(preambleLength).cannotSumTo(it.last()) }
+            ?.last()
             ?: throw NoSolutionFoundException()
     }
 
     override fun answerPart2(): Long {
-        val targetNumber = encryptedData.windowed(preambleLength + 1)
-            .filter { it.take(preambleLength).cannotSumTo(it.last()) }
-            .map { it.last() }
-            .firstOrNull()
-            ?: throw NoSolutionFoundException()
+        val targetNumber = answerPart1()
 
         return encryptedData.takeWhile { it != targetNumber }
             .findSummableTo(targetNumber)
