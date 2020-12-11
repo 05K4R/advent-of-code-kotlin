@@ -4,7 +4,7 @@ import InputReader
 import NoSolutionFoundException
 import Puzzle
 
-class Day11(val seatGrid: List<String>) : Puzzle<Int> {
+class Day11(seatGrid: List<String>) : Puzzle<Int> {
     constructor(inputReader: InputReader) : this(inputReader.asStringList())
 
     private val ferrySeatGrid = parseFerrySeats(seatGrid)
@@ -15,7 +15,8 @@ class Day11(val seatGrid: List<String>) : Puzzle<Int> {
     }
 
     override fun answerPart2(): Int {
-        TODO("Not yet implemented")
+        return findStable2(ferrySeatGrid).seats
+            .count { (_, seat) -> seat == SeatStatus.Occupied }
     }
 }
 
@@ -25,13 +26,19 @@ private tailrec fun findStable(current: FerrySeatGrid): FerrySeatGrid {
     else findStable(next)
 }
 
+private tailrec fun findStable2(current: FerrySeatGrid): FerrySeatGrid {
+    val next = current.nextState2()
+    return if (next == current) current
+    else findStable2(next)
+}
+
 private fun parseFerrySeats(seatGrid: List<String>): FerrySeatGrid {
     return seatGrid
         .mapIndexed { rowIndex, row ->
             rowIndex to row.map { parseSeat(it) }
         }
         .flatMap { (rowIndex, row) ->
-            row.mapIndexed { columnIndex, seat -> Pair(columnIndex, rowIndex) to seat }
+            row.mapIndexed { columnIndex, seat -> Coordinate(columnIndex, rowIndex) to seat }
         }
         .toMap()
         .let { FerrySeatGrid(it) }
@@ -46,7 +53,7 @@ private fun parseSeat(seatChar: Char): SeatStatus {
     }
 }
 
-private data class FerrySeatGrid(val seats: Map<Pair<Int, Int>, SeatStatus> = emptyMap()) {
+private data class FerrySeatGrid(val seats: Map<Coordinate, SeatStatus> = emptyMap()) {
     fun nextState(): FerrySeatGrid {
         return seats.map {
             it.key to it.value.nextState(adjacent(it.key))
@@ -55,27 +62,43 @@ private data class FerrySeatGrid(val seats: Map<Pair<Int, Int>, SeatStatus> = em
             .let { FerrySeatGrid(it) }
     }
 
-    private fun adjacent(base: Pair<Int, Int>): List<SeatStatus> {
-        val first = seats[Pair(base.first, base.second - 1)]
-        val second = seats[Pair(base.first, base.second + 1)]
-        val third = seats[Pair(base.first - 1, base.second)]
-        val fourth = seats[Pair(base.first + 1, base.second)]
-        val fifth = seats[Pair(base.first + 1, base.second + 1)]
-        val sixth = seats[Pair(base.first + 1, base.second - 1)]
-        val seventh = seats[Pair(base.first - 1, base.second + 1)]
-        val eight = seats[Pair(base.first - 1, base.second - 1)]
+    fun nextState2(): FerrySeatGrid {
+        return seats.map {
+            it.key to it.value.nextState(adjacent2(it.key), tolerance = 5)
+        }
+            .toMap()
+            .let { FerrySeatGrid(it) }
+    }
 
-        return listOfNotNull(first, second, third, fourth, fifth, sixth, seventh, eight)
+    private fun adjacent(base: Coordinate): List<SeatStatus> {
+        return (-1..1).flatMap { col -> (-1..1).map { row -> Coordinate(col, row) } }
+            .minus(Coordinate(0, 0))
+            .mapNotNull { (col, row) -> seats[Coordinate(base.first + col, base.second + row)] }
+    }
+
+    private fun adjacent2(base: Coordinate): List<SeatStatus> {
+        return (-1..1).flatMap { col -> (-1..1).map { row -> Coordinate(col, row) } }
+            .minus(Coordinate(0, 0))
+            .mapNotNull { findAdjacentLong(base, it) }
+    }
+
+    private fun findAdjacentLong(base: Coordinate, direction: Coordinate): SeatStatus? {
+        val seat = seats[base + direction]
+        return if (seat == SeatStatus.Floor) findAdjacentLong(base + direction, direction)
+        else seat
     }
 }
 private enum class SeatStatus {
     Floor, Empty, Occupied;
 
-    fun nextState(adjacent: List<SeatStatus>): SeatStatus {
+    fun nextState(adjacent: List<SeatStatus>, tolerance: Int = 4): SeatStatus {
         return when (this) {
             Floor -> Floor
             Empty -> if (adjacent.none { it == Occupied }) Occupied else Empty
-            Occupied -> if (adjacent.count { it == Occupied } >= 4) Empty else Occupied
+            Occupied -> if (adjacent.count { it == Occupied } >= tolerance) Empty else Occupied
         }
     }
 }
+
+typealias Coordinate = Pair<Int, Int>
+private operator fun Coordinate.plus(that: Coordinate) = Coordinate(this.first + that.first, this.second + that.second)
