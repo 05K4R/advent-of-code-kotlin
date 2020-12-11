@@ -2,8 +2,8 @@ import java.io.File
 
 fun main() {
     val year = 2020
-    val day = 9
-    val part = 2
+    val day = 11
+    val part = 1
     println("Day $day part $part = ${calculateAnswer(year, day, part)}")
 }
 
