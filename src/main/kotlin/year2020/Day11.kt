@@ -10,26 +10,20 @@ class Day11(seatGrid: List<String>) : Puzzle<Int> {
     private val ferrySeatGrid = parseFerrySeats(seatGrid)
 
     override fun answerPart1(): Int {
-        return findStable(ferrySeatGrid).seats
+        return findStable(ferrySeatGrid, extended = false, tolerance = 4).seats
             .count { (_, seat) -> seat == SeatStatus.Occupied }
     }
 
     override fun answerPart2(): Int {
-        return findStable2(ferrySeatGrid).seats
+        return findStable(ferrySeatGrid, extended = true, tolerance = 5).seats
             .count { (_, seat) -> seat == SeatStatus.Occupied }
     }
 }
 
-private tailrec fun findStable(current: FerrySeatGrid): FerrySeatGrid {
-    val next = current.nextState()
+private tailrec fun findStable(current: FerrySeatGrid, extended: Boolean, tolerance: Int): FerrySeatGrid {
+    val next = current.nextState(extended, tolerance)
     return if (next == current) current
-    else findStable(next)
-}
-
-private tailrec fun findStable2(current: FerrySeatGrid): FerrySeatGrid {
-    val next = current.nextState2()
-    return if (next == current) current
-    else findStable2(next)
+    else findStable(next, extended, tolerance)
 }
 
 private fun parseFerrySeats(seatGrid: List<String>): FerrySeatGrid {
@@ -54,38 +48,28 @@ private fun parseSeat(seatChar: Char): SeatStatus {
 }
 
 private data class FerrySeatGrid(val seats: Map<Coordinate, SeatStatus> = emptyMap()) {
-    fun nextState(): FerrySeatGrid {
+    fun nextState(extended: Boolean, tolerance: Int): FerrySeatGrid {
         return seats.map {
-            it.key to it.value.nextState(adjacent(it.key))
+            it.key to it.value.nextState(adjacent(it.key, extended), tolerance)
         }
             .toMap()
             .let { FerrySeatGrid(it) }
     }
 
-    fun nextState2(): FerrySeatGrid {
-        return seats.map {
-            it.key to it.value.nextState(adjacent2(it.key), tolerance = 5)
+    private fun adjacent(base: Coordinate, extended: Boolean): List<SeatStatus> {
+        return (-1..1).flatMap { col -> (-1..1).map { row -> Coordinate(col, row) } }
+            .minus(Coordinate(0, 0))
+            .mapNotNull { findAdjacentLong(base, it, extended) }
+    }
+
+    private tailrec fun findAdjacentLong(base: Coordinate, direction: Coordinate, extended: Boolean = false): SeatStatus? {
+        return if (extended) {
+            val seat = seats[base + direction]
+            if (seat == SeatStatus.Floor) findAdjacentLong(base + direction, direction, extended)
+            else seat
+        } else {
+            seats[base + direction]
         }
-            .toMap()
-            .let { FerrySeatGrid(it) }
-    }
-
-    private fun adjacent(base: Coordinate): List<SeatStatus> {
-        return (-1..1).flatMap { col -> (-1..1).map { row -> Coordinate(col, row) } }
-            .minus(Coordinate(0, 0))
-            .mapNotNull { (col, row) -> seats[Coordinate(base.first + col, base.second + row)] }
-    }
-
-    private fun adjacent2(base: Coordinate): List<SeatStatus> {
-        return (-1..1).flatMap { col -> (-1..1).map { row -> Coordinate(col, row) } }
-            .minus(Coordinate(0, 0))
-            .mapNotNull { findAdjacentLong(base, it) }
-    }
-
-    private fun findAdjacentLong(base: Coordinate, direction: Coordinate): SeatStatus? {
-        val seat = seats[base + direction]
-        return if (seat == SeatStatus.Floor) findAdjacentLong(base + direction, direction)
-        else seat
     }
 }
 private enum class SeatStatus {
