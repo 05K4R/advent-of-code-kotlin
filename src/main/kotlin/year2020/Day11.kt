@@ -4,9 +4,9 @@ import InputReader
 import NoSolutionFoundException
 import Puzzle
 
-typealias Coordinate = Pair<Int, Int>
-operator fun Coordinate.plus(that: Coordinate) = Coordinate(this.first + that.first, this.second + that.second)
-typealias SeatMap = Map<Coordinate, Seat>
+private typealias Coordinate = Pair<Int, Int>
+private operator fun Coordinate.plus(that: Coordinate) = Coordinate(this.first + that.first, this.second + that.second)
+private typealias SeatMap = Map<Coordinate, Seat>
 
 class Day11(seatGrid: List<String>) : Puzzle<Int> {
     constructor(inputReader: InputReader) : this(inputReader.asStringList())
@@ -39,9 +39,8 @@ private data class WaitingArea(val seats: SeatMap) {
         }.toMap().let { WaitingArea(it) }
     }
 
-    fun adjacentSeats(start: Coordinate, ignoreFloor: Boolean): List<Seat> {
-        return directions.mapNotNull { searchAdjacent(start, direction = it, ignoreFloor) }
-    }
+    fun adjacentSeats(start: Coordinate, ignoreFloor: Boolean) =
+        directions.mapNotNull { searchAdjacent(start, direction = it, ignoreFloor) }
 
     private tailrec fun searchAdjacent(base: Coordinate, direction: Coordinate, ignoreFloor: Boolean = false): Seat? {
         val seat = seats[base + direction]
@@ -50,7 +49,7 @@ private data class WaitingArea(val seats: SeatMap) {
     }
 }
 
-enum class Seat { Floor, Empty, Occupied;
+private enum class Seat { Floor, Empty, Occupied;
     fun nextState(adjacent: List<Seat>, tolerance: Int = 4): Seat {
         return when (this) {
             Floor -> Floor
@@ -60,9 +59,8 @@ enum class Seat { Floor, Empty, Occupied;
     }
 }
 
-private fun parseWaitingArea(seatGrid: List<String>): WaitingArea {
-    return seatGrid
-        .mapIndexed { rowIndex, row ->
+private fun parseWaitingArea(seatGrid: List<String>) =
+    seatGrid.mapIndexed { rowIndex, row ->
             rowIndex to row.map { parseSeat(it) }
         }
         .flatMap { (rowIndex, row) ->
@@ -70,13 +68,10 @@ private fun parseWaitingArea(seatGrid: List<String>): WaitingArea {
         }
         .toMap()
         .let { WaitingArea(it) }
-}
 
-private fun parseSeat(seatChar: Char): Seat {
-    return when(seatChar) {
+private fun parseSeat(seatChar: Char) = when(seatChar) {
         '.' -> Seat.Floor
         'L' -> Seat.Empty
         '#' -> Seat.Occupied
         else -> throw NoSolutionFoundException()
     }
-}
