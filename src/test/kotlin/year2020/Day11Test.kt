@@ -6,33 +6,33 @@ import io.kotest.matchers.shouldBe
 
 class Day11Test : StringSpec({
     "Part one, one empty becomes occupied" {
-        val seatGrid = listOf(
+        val waitingArea = listOf(
             "L",
         )
 
-        Day11(seatGrid).answerPart1() shouldBe 1
+        Day11(waitingArea).answerPart1() shouldBe 1
     }
 
     "Part one, one occupied is stable" {
-        val seatGrid = listOf(
+        val waitingArea = listOf(
             "#",
         )
 
-        Day11(seatGrid).answerPart1() shouldBe 1
+        Day11(waitingArea).answerPart1() shouldBe 1
     }
 
     "Part one, all but middle becomes occupied" {
-        val seatGrid = listOf(
+        val waitingArea = listOf(
             ".L.",
             "LLL",
             ".L.",
         )
 
-        Day11(seatGrid).answerPart1() shouldBe 4
+        Day11(waitingArea).answerPart1() shouldBe 4
     }
 
     "Part one, given test" {
-        val seatGrid = listOf(
+        val waitingArea = listOf(
             "L.LL.LL.LL",
             "LLLLLLL.LL",
             "L.L.L..L..",
@@ -45,7 +45,7 @@ class Day11Test : StringSpec({
             "L.LLLLL.LL",
         )
 
-        Day11(seatGrid).answerPart1() shouldBe 37
+        Day11(waitingArea).answerPart1() shouldBe 37
     }
 
     "Part one, my input" {
@@ -53,7 +53,7 @@ class Day11Test : StringSpec({
     }
 
     "Part two, given test" {
-        val seatGrid = listOf(
+        val waitingArea = listOf(
             "L.LL.LL.LL",
             "LLLLLLL.LL",
             "L.L.L..L..",
@@ -66,7 +66,7 @@ class Day11Test : StringSpec({
             "L.LLLLL.LL",
         )
 
-        Day11(seatGrid).answerPart2() shouldBe 26
+        Day11(waitingArea).answerPart2() shouldBe 26
     }
 
     "Part two, my input" {
