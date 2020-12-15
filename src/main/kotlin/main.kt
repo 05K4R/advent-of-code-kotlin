@@ -2,7 +2,7 @@ import java.io.File
 
 fun main() {
     val year = 2020
-    val day = 11
+    val day = 15
     val part = 1
     println("Day $day part $part = ${calculateAnswer(year, day, part)}")
 }
@@ -15,6 +15,9 @@ class InputReader(year: Int, day: Int) {
     fun asLongList() = read { lines -> lines.map { it.toLong() }.toList() }
     fun asStringSet() = read { it.toSet() }
     fun asStringList() = read { it.toList() }
+    fun asCommaSeparatedIntList() = read { lines -> lines.flatMap { line ->
+        line.split(",").map { it.toInt() }
+    }.toList() }
 }
 
 class InvalidPartException(part: Int) : RuntimeException("Invalid part: $part")
