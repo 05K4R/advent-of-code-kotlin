@@ -2,7 +2,7 @@ import java.io.File
 
 fun main() {
     val year = 2020
-    val day = 15
+    val day = 23
     val part = 1
     println("Day $day part $part = ${calculateAnswer(year, day, part)}")
 }
@@ -17,6 +17,9 @@ class InputReader(year: Int, day: Int) {
     fun asStringList() = read { it.toList() }
     fun asCommaSeparatedIntList() = read { lines -> lines.flatMap { line ->
         line.split(",").map { it.toInt() }
+    }.toList() }
+    fun asSingleDigitIntList() = read { lines -> lines.flatMap { line ->
+        line.toCharArray().map { Character.getNumericValue(it) }
     }.toList() }
 }
 
